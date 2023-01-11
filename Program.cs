@@ -24,13 +24,12 @@ namespace BeerProduction
                 // Calculate the year mean and median for each record
                 foreach (var record in records)
                 {
-                    //record.YearMean = (records.Where(r => r.Date.Year == record.Date.Year).Average(r => r.BeerProduction));
-                    //record.YearMedian = (records.Where(r => r.Date.Year == record.Date.Year).Select(r => r.BeerProduction).Median());
-                    record.YearMean = double.Parse(string.Format("{0:0.00}", records.Where(r => r.Date.Year == record.Date.Year).Average(r => r.BeerProduction)));
-                    record.YearMedian = double.Parse(string.Format("{0:0.00}", records.Where(r => r.Date.Year == record.Date.Year).Select(r => r.BeerProduction).Median()));
+                    record.YearMean = (records.Where(r => r.Date.Year == record.Date.Year).Average(r => r.BeerProduction));
+                    record.YearMedian = (records.Where(r => r.Date.Year == record.Date.Year).Select(r => r.BeerProduction).Median());
                     record.IsBeerProductionGreaterThanYearMean = record.BeerProduction > record.YearMean;
+                    //record.YearMean = double.Parse(string.Format("{0:0.00}", records.Where(r => r.Date.Year == record.Date.Year).Average(r => r.BeerProduction)));
+                    //record.YearMedian = double.Parse(string.Format("{0:0.00}", records.Where(r => r.Date.Year == record.Date.Year).Select(r => r.BeerProduction).Median()));
                 }
-
                 // Write the updated data to the output CSV file
                 using (var writer = new StreamWriter("Output.csv", false, new UTF8Encoding(true)))
                 using (var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture))
@@ -51,12 +50,11 @@ namespace BeerProduction
                         csvWriter.WriteField(record.Grain);
                         csvWriter.WriteField(record.Date.ToString("yyyy/dd/MM", new CultureInfo("en-US")));
                         //csvWriter.WriteField("\"" + record.FactoryManagerName + "\"");
-                        //csvWriter.WriteField("\"" + record.FactoryManagerName.ToString() + "\"");
-                        csvWriter.WriteField(record.FactoryManagerName.ToString());
+                        csvWriter.WriteField(record.FactoryManagerName, true);
                         csvWriter.WriteField(record.BeerProduction);
-                        csvWriter.WriteField(record.YearMean);
-                        csvWriter.WriteField(record.YearMedian.ToString());
-                        csvWriter.WriteField(record.IsBeerProductionGreaterThanYearMean ? "yes" : "no");
+                        csvWriter.WriteField(string.Format("{0:0.00}", record.YearMean));
+                        csvWriter.WriteField(string.Format("{0:0.00}", record.YearMedian));
+                        csvWriter.WriteField((record.IsBeerProductionGreaterThanYearMean ? "yes" : "no"), true);
                         csvWriter.NextRecord();
                     }
                 }
